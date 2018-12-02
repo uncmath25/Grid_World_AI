@@ -1,0 +1,64 @@
+#############
+### Views ###
+#############
+
+# GameUI
+A simple ui wrapper for the game object, which utilizes basic pygame functionality to manage a 2-d grid world
+The continually-invoked run function mostly just calls the game's draw function and passes its ui screen reference, after which it requests that the game update itself
+This draw-update cycle is throttled by pygame's Clock feature, which ensures that the updates don't occur too frequently
+This class is limited in scope and exists primarily to boot the ui and manage any necessary pygame details
+
+
+##################
+### ViewModels ###
+##################
+
+# Game
+This object is the central "fulcrum" for the application, which manages the appropriate model objects and handles ui reqeusts from the GameUI
+It draws the model objects, according to pre-defined rules for the grid structure
+It also manages the appropriate update invocations for the agent objects; the set-info and update calls occur "turn-based" for the agents, as ordered by the game's agents list
+The world's model objects: agents and environment are loaded modularly from the catalog managed by the game_examples script
+
+
+##############
+### Models ###
+##############
+
+# Agent
+Represents an abstract agent in the game, which is constructed to be highly autonomous and it only accessible via the following 3 public methods:
+1. set_info: present the agent with a limited info object, which communicates what the game wished the agent to know about its world
+2. draw: ask the agent to draw itself, given the necessary ui details of the grid world
+3. update: ask the agent to update its state
+The agent embodies it own ai, which gives the agent its agency; the one exception being if the agent is user-controlled and draws its agency from the user
+Currently this intelligence choice is mutually exclusive, if the ai is specified as None, then the agent will be user-controlled (only one agent may be user-controlled)
+
+# Block
+Represents a limited and typically static object, which largely just possesses information about its nature and how to draw itself
+
+# Item
+Represents a limited and typically static object, which is distinguishable from a block object by its ability to be removed (or potentially in the future movable)
+
+# Info
+Represents a limited information object communicating knowledge about a localized region of the grid world
+It stores information concerning the agents, items and blocks within a region
+Its constructor should only be called by the "omniscient" game object, and should only be presented to agents via the localize method
+
+
+##########
+### AI ###
+##########
+
+# BaseAI
+Base AI class which provides basic functionality which all AI classes should inherit, which include:
+1. set_pos_info: passing the agent's position and known surroundings information
+2. _get_possible_moves: returns a list of possible moves, based upon the surrounding environment
+3. _check_can_update: determines if the ai can update itself again, based upon its inherent "speed"
+
+# RandomAI
+A stupid ai without intelligence, with simply makes a random choice from among all possible moves, including not moving
+Useful as a temporary ai stub, can also be made motionless
+
+# SeekDestroyAI
+A hostile ai which endeavors to seek out and destroy all friendly agents, which it is aware of
+Currently, it re-targets the closest friendly agent during each update
+Its skill in successfully destroying all

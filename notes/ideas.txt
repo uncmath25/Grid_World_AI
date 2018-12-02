@@ -1,0 +1,7 @@
+Model intelligence as neural network with feature surroundings as input as move decision as output
+
+Consider AI objectives functions
+Consider AI gene structure
+Prototype monte carlo
+
+Consider user controls for ui manipulation or game manipulation/specification

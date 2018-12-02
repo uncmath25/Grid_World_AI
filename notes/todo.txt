@@ -1,0 +1,3 @@
+Add ui-headless ai testing
+
+Agents still know size of world from block_width and block_height

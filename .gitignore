@@ -1,0 +1,5 @@
+*__pycache__*
+*.pyc
+
+_run_grid_world.sh
+notes/performance_log.csv
