@@ -1,12 +1,20 @@
-import numpy as np
 
 
 def compute_dist(pos_1, pos_2, block_width, block_height):
-    """ Compute the distance between two grid positions """
-    return(min((pos_1[0] - pos_2[0])% block_height, (pos_2[0] - pos_1[0])% block_height) + min((pos_1[1] - pos_2[1])% block_width, (pos_2[1] - pos_1[1])% block_width))
+    """
+    Compute the distance between two grid positions
+    """
+    return(min((pos_1[0] - pos_2[0]) % block_height,
+               (pos_2[0] - pos_1[0]) % block_height)
+           + min((pos_1[1] - pos_2[1]) % block_width,
+                 (pos_2[1] - pos_1[1]) % block_width))
+
 
 def build_grid_zone(center_pos, distance, block_width, block_height):
-    """ Builds a set of positions within a given distance of the center position, according to the taxicab metric """
+    """
+    Builds a set of positions within a given distance of the center position, \
+        according to the taxicab metric
+    """
     center_pos = tuple(center_pos)
     zone = {}
     zone[center_pos] = 0

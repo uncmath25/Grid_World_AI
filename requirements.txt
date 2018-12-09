@@ -1,3 +1,6 @@
 argparse
 numpy
 pygame
+
+flake8
+pytest
