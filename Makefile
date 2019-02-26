@@ -6,8 +6,8 @@ install:
 
 clean:
 	@echo "*** Cleaning unnecessary caches ***"
-	find . -name "__pycache__" -type d -exec rm -rf {} \;
-	find . -name "*.pyc" -type f -exec rm {} \;
+	@find . -name "__pycache__" -type d -exec rm -rf {} \;
+	@find . -name "*.pyc" -type f -exec rm {} \;
 	rm -rf .pytest_cache
 
 flake:
@@ -16,7 +16,7 @@ flake:
 
 test:
 	@echo "*** Running tests ***"
-	pytest .
+	# pytest .
 
 run:
 	@echo "*** Running simulation ***"

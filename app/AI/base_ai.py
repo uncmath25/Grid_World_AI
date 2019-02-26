@@ -6,8 +6,7 @@ from Models.Utility.actions import Actions
 
 class BaseAI():
 
-    def __init__(self, position, speed_factor, game_speed, block_width,
-                 block_height, agent_name):
+    def __init__(self, position, speed_factor, game_speed, block_width, block_height, agent_name):
         """
         Initialize the ai state
         """
@@ -36,8 +35,7 @@ class BaseAI():
 
     def notify_game_resumed(self):
         """
-        Informs the ai that the game is resumed and the update cycle should \
-            be reset
+        Informs the ai that the game is resumed and the update cycle should be reset
         """
         self._is_resumed = True
 
@@ -47,21 +45,15 @@ class BaseAI():
         """
         possible_actions = [Actions.MOVE_NONE]
         blocks_pos_type_map = self._info.get_blocks_pos_type_map()
-        if blocks_pos_type_map[(self._pos[0],
-                               (self._pos[1] - 1) % self._BLOCK_WIDTH)] \
-                == Block.Empty:
+        if blocks_pos_type_map[(self._pos[0], (self._pos[1] - 1) % self._BLOCK_WIDTH)] == Block.Empty:
             possible_actions.append(Actions.MOVE_LEFT)
-        if blocks_pos_type_map[(self._pos[0],
-                               (self._pos[1] + 1) % self._BLOCK_WIDTH)] \
-                == Block.Empty:
+        if blocks_pos_type_map[(self._pos[0], (self._pos[1] + 1) % self._BLOCK_WIDTH)] == Block.Empty:
             possible_actions.append(Actions.MOVE_RIGHT)
-        if blocks_pos_type_map[((self._pos[0] - 1) % self._BLOCK_HEIGHT,
-                               self._pos[1])] == Block.Empty:
+        if blocks_pos_type_map[((self._pos[0] - 1) % self._BLOCK_HEIGHT, self._pos[1])] == Block.Empty:
             possible_actions.append(Actions.MOVE_UP)
-        if blocks_pos_type_map[((self._pos[0] + 1) % self._BLOCK_HEIGHT,
-                               self._pos[1])] == Block.Empty:
+        if blocks_pos_type_map[((self._pos[0] + 1) % self._BLOCK_HEIGHT, self._pos[1])] == Block.Empty:
             possible_actions.append(Actions.MOVE_DOWN)
-        return(possible_actions)
+        return possible_actions
 
     def _check_can_update(self):
         """
@@ -70,9 +62,8 @@ class BaseAI():
         if self._is_resumed:
             self._last_update_time = time.time()
             self._is_resumed = False
-        if time.time() - self._last_update_time \
-                < self._SPEED_FACTOR*self._game_speed:
-            return(False)
+        if time.time() - self._last_update_time < self._SPEED_FACTOR * self._game_speed:
+            return False
         else:
             self._last_update_time = time.time()
-            return(True)
+            return True

@@ -10,8 +10,7 @@ class Agent():
     Friendly = 'Friendly'
     Enemy = 'Enemy'
 
-    def __init__(self, name, agent_type, ai, color, position, block_width,
-                 block_height):
+    def __init__(self, name, agent_type, ai, color, position, block_width, block_height):
         """
         Initialize agent state
         """
@@ -30,19 +29,19 @@ class Agent():
         """
         Return the name of the agent
         """
-        return(str(self._NAME))
+        return str(self._NAME)
 
     def get_type(self):
         """
         Returns the agent type
         """
-        return(str(self._TYPE))
+        return str(self._TYPE)
 
     def get_pos(self):
         """
         Return the current position of the agent
         """
-        return(tuple(self._pos))
+        return tuple(self._pos)
 
     def set_info(self, info):
         """
@@ -60,8 +59,7 @@ class Agent():
 
     def notify_game_resumed(self):
         """
-        Informs the agent's ai that the game is resumed and the update cycle \
-            should be reset
+        Informs the agent's ai that the game is resumed and the update cycle should be reset
         """
         self._AI.notify_game_resumed()
 
@@ -75,12 +73,10 @@ class Agent():
         """
         Draw the agent's current position
         """
-        left = block_dim[0]*self._pos[1]+((line_thickness-1)/2)
-        top = block_dim[1]*self._pos[0]+((line_thickness-1)/2)
-        width = block_dim[0]-(line_thickness-1)
-        height = block_dim[1]-(line_thickness-1)
-        # pygame.draw.rect(screen, self._COLOR,
-        #                  pygame.Rect(left, top, width, height))
+        left = block_dim[0] * self._pos[1] + ((line_thickness - 1) / 2)
+        top = block_dim[1] * self._pos[0] + ((line_thickness - 1) / 2)
+        width = block_dim[0] - (line_thickness - 1)
+        height = block_dim[1] - (line_thickness - 1)
         rect = pygame.Surface((width, height), pygame.SRCALPHA)
         rect.fill(self._COLOR)
         screen.blit(rect, (left, top))
@@ -99,27 +95,24 @@ class Agent():
         elif action == Actions.MOVE_DOWN:
             new_pos[0] = (new_pos[0] + step_size) % self._BLOCK_HEIGHT
         new_pos = tuple(new_pos)
-        if (self._INFO.get_blocks_pos_type_map()[new_pos] == Block.Empty):
+        if self._INFO.get_blocks_pos_type_map()[new_pos] == Block.Empty:
             self._pos = new_pos
 
     def _process_user_input(self, action):
         """
         Change the agent accoring to the specified action
         """
-        if action in [Actions.MOVE_LEFT, Actions.MOVE_RIGHT, Actions.MOVE_UP,
-                      Actions.MOVE_DOWN]:
+        if action in [Actions.MOVE_LEFT, Actions.MOVE_RIGHT, Actions.MOVE_UP, Actions.MOVE_DOWN]:
             self._move(action)
-            return(action)
-        else:
-            return(None)
+            return action
 
     def update(self, action, is_forced):
         """
         Update the agent's current state
         """
         if self._AI is None:
-            return(self._process_user_input(action) is not None)
+            return self._process_user_input(action) is not None
         else:
             action = self._AI.update(is_forced)
             self._move(action)
-            return(action is not None)
+            return action is not None

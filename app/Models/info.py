@@ -26,50 +26,44 @@ class Info():
         agents = []
         blocks = []
         items = []
-        zone = build_grid_zone(center_pos, radius, self._BLOCK_WIDTH,
-                               self._BLOCK_HEIGHT)
+        zone = build_grid_zone(center_pos, radius, self._BLOCK_WIDTH, self._BLOCK_HEIGHT)
         for pos in zone:
             for name in self._agents_name_pos_map:
                 if pos == self._agents_name_pos_map[name]:
-                    agents.append(Agent(name, self._agents_name_type_map[name],
-                                        BaseAI((0, 0), 0, 0, 0, 0, ''),
-                                        (0, 0, 0), pos, self._BLOCK_WIDTH,
-                                        self._BLOCK_HEIGHT))
+                    agents.append(Agent(name, self._agents_name_type_map[name], BaseAI((0, 0), 0, 0, 0, 0, ''), (0, 0, 0), pos, self._BLOCK_WIDTH, self._BLOCK_HEIGHT))
             if pos in self._blocks_pos_type_map:
-                blocks.append(Block(self._blocks_pos_type_map[pos], (0, 0, 0),
-                                    pos))
+                blocks.append(Block(self._blocks_pos_type_map[pos], (0, 0, 0), pos))
             if pos in self._items_pos_type_map:
-                items.append(Item(self._items_pos_type_map[pos], (0, 0, 0),
-                                  pos))
+                items.append(Item(self._items_pos_type_map[pos], (0, 0, 0), pos))
         info_copy = Info(self._BLOCK_WIDTH, self._BLOCK_HEIGHT)
         info_copy.set_agents(agents)
         info_copy.set_blocks(blocks)
         info_copy.set_items(items)
-        return(info_copy)
+        return info_copy
 
     def get_agents_name_type_map(self):
         """
         Returns the agents name to type map
         """
-        return(dict(self._agents_name_type_map))
+        return dict(self._agents_name_type_map)
 
     def get_agents_name_pos_map(self):
         """
         Returns the agents name to position map
         """
-        return(dict(self._agents_name_pos_map))
+        return dict(self._agents_name_pos_map)
 
     def get_blocks_pos_type_map(self):
         """
         Returns the blocks position to type map
         """
-        return(dict(self._blocks_pos_type_map))
+        return dict(self._blocks_pos_type_map)
 
     def get_items_pos_type_map(self):
         """
         Returns the items position to type map
         """
-        return(dict(self._items_pos_type_map))
+        return dict(self._items_pos_type_map)
 
     def set_agents(self, agents):
         """

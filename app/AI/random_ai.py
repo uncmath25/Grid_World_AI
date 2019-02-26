@@ -6,13 +6,11 @@ from Models.Utility.actions import Actions
 
 class RandomAI(BaseAI):
 
-    def __init__(self, position, speed_factor, game_speed, block_width,
-                 block_height, agent_name, inactive=False):
+    def __init__(self, position, speed_factor, game_speed, block_width, block_height, agent_name, inactive=False):
         """
         Initializes the ai state
         """
-        super().__init__(position, speed_factor, game_speed, block_width,
-                         block_height, agent_name)
+        super().__init__(position, speed_factor, game_speed, block_width, block_height, agent_name)
         self._INACTIVE = bool(inactive)
 
     def print_log(self):
@@ -26,8 +24,8 @@ class RandomAI(BaseAI):
         Inform the ai to update its state given its current info
         """
         if not is_forced and not self._check_can_update():
-            return(None)
+            return
         if self._INACTIVE:
-            return(Actions.MOVE_NONE)
+            return Actions.MOVE_NONE
         else:
-            return(random.choice(self._get_possible_moves()))
+            return random.choice(self._get_possible_moves())
