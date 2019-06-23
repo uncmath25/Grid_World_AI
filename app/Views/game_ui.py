@@ -2,6 +2,7 @@ import pygame
 import sys
 import time
 
+from Models.Utility.actions import Actions
 from ViewModels.game import Game
 
 
@@ -27,8 +28,18 @@ class GameUI():
         self._can_send_event = None
         self._last_event_notification_time = None
         self._is_paused = True
-        self._kill_flag_dict = {}
-        self._kill_flag_dict['kill_flag'] = False
+
+        self._game_speed_key_map = {
+            pygame.K_1: 3,
+            pygame.K_2: 2.5,
+            pygame.K_3: 2,
+            pygame.K_4: 1.5,
+            pygame.K_5: 1,
+            pygame.K_6: 0.75,
+            pygame.K_7: 0.5,
+            pygame.K_8: 0.25,
+            pygame.K_9: 0.1
+        }
 
     def init(self):
         """
@@ -49,51 +60,33 @@ class GameUI():
         """
         Run the main game loop
         """
-        game_speed_key_map = {}
-        game_speed_key_map[pygame.K_1] = 0.1
-        game_speed_key_map[pygame.K_2] = 0.25
-        game_speed_key_map[pygame.K_3] = 0.5
-        game_speed_key_map[pygame.K_4] = 0.75
-        game_speed_key_map[pygame.K_5] = 1
-        game_speed_key_map[pygame.K_6] = 1.5
-        game_speed_key_map[pygame.K_7] = 2
-        game_speed_key_map[pygame.K_8] = 2.5
-        game_speed_key_map[pygame.K_9] = 3
-
-        while not self._kill_flag_dict['kill_flag']:
+        while not self._game.is_game_over():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                     pygame.quit()
-                    sys.exit()
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                    sys.exit(0)
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                     self._is_paused = not self._is_paused
                     if not self._is_paused:
                         self._game.notify_game_resumed()
-                    print('GAME PAUSED') \
-                        if self._is_paused else print('GAME RUNNING')
-                if event.type == pygame.KEYDOWN and event.key in game_speed_key_map:
-                    self._game.set_game_speed(game_speed_key_map[event.key])
-                    print('Game Speed: {0} Hz'.format(round(1 / game_speed_key_map[event.key], 1)))
-                if self._is_paused and event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                    self._game.update(self._kill_flag_dict, True)
+                    print('GAME PAUSED') if self._is_paused else print('GAME RUNNING')
+                elif event.type == pygame.KEYDOWN and event.key in self._game_speed_key_map:
+                    self._game.set_game_speed(self._game_speed_key_map[event.key])
+                    print('Game Speed: {0} Hz'.format(round(1 / self._game_speed_key_map[event.key], 1)))
+                elif self._is_paused and event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                    self._game.update(True)
                     self._game.draw(self._screen)
                     pygame.display.update()
                     self._game.print_log()
-                if event.type == pygame.KEYUP:
-                    self._can_send_event = True
+                elif not self._is_paused and event.type == pygame.KEYDOWN and event.key in Actions.Map:
+                    if (time.time() - self._last_event_notification_time) > (1 / self._MAX_UPDATES_PER_SECOND):
+                        self._game.notify_user_input_event(event.key)
+                        self._last_event_notification_time = time.time()
 
             if self._is_paused:
                 continue
 
-            keys_pressed = pygame.key.get_pressed()
-            for key_index_pair in list(enumerate(keys_pressed)):
-                if key_index_pair[1]:
-                    if (time.time() - self._last_event_notification_time) > (1 / self._MAX_UPDATES_PER_SECOND) or self._can_send_event:
-                        self._game.notify_user_input_event(key_index_pair[0])
-                        self._can_send_event = False
-                        self._last_event_notification_time = time.time()
-
-            self._game.update(self._kill_flag_dict, False)
+            self._game.update(False)
             self._game.draw(self._screen)
 
             pygame.display.update()

@@ -39,6 +39,12 @@ class BaseAI():
         """
         self._is_resumed = True
 
+    def update(self, is_forced):
+        """
+        Inform the ai to update its state given its current info
+        """
+        raise NotImplementedError
+
     def _get_possible_moves(self):
         """
         Returns the list of possible moves, based upon the given blocks info

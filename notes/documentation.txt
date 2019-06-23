@@ -14,7 +14,7 @@ This class is limited in scope and exists primarily to boot the ui and manage an
 ##################
 
 # Game
-This object is the central "fulcrum" for the application, which manages the appropriate model objects and handles ui reqeusts from the GameUI
+This object is the central "fulcrum" for the application, which manages the appropriate model objects and handles ui requests from the GameUI
 It draws the model objects, according to pre-defined rules for the grid structure
 It also manages the appropriate update invocations for the agent objects; the set-info and update calls occur "turn-based" for the agents, as ordered by the game's agents list
 The world's model objects: agents and environment are loaded modularly from the catalog managed by the game_examples script
@@ -29,6 +29,7 @@ Represents an abstract agent in the game, which is constructed to be highly auto
 1. set_info: present the agent with a limited info object, which communicates what the game wished the agent to know about its world
 2. draw: ask the agent to draw itself, given the necessary ui details of the grid world
 3. update: ask the agent to update its state
+*4. set_pos: this is a "god-mode" option which the game only uses to ensure invalid world positions don't occur
 The agent embodies it own ai, which gives the agent its agency; the one exception being if the agent is user-controlled and draws its agency from the user
 Currently this intelligence choice is mutually exclusive, if the ai is specified as None, then the agent will be user-controlled (only one agent may be user-controlled)
 

@@ -65,6 +65,16 @@ class Info():
         """
         return dict(self._items_pos_type_map)
 
+    def is_pos_occupied(self, pos):
+        """
+        Returns a flag indicating whether the given position is occupied by an agent
+        """
+        name_pos_map = self.get_agents_name_pos_map()
+        for name in name_pos_map:
+            if name_pos_map[name] == pos:
+                return True
+        return False
+
     def set_agents(self, agents):
         """
         Specifies the agents which exist in the grid

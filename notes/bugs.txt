@@ -1,1 +1,0 @@
-Enemy does not destroy friendly when the friendly moves into the enemy square

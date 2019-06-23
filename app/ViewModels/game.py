@@ -3,7 +3,9 @@ import pygame
 from Models.agent import Agent
 from Models.info import Info
 from Models.Utility.actions import Actions
-from ViewModels.game_examples import load_blocks_basic, load_agents_snake_mice
+from ViewModels.game_examples import load_blocks_basic
+# from ViewModels.game_examples import load_agents_one_vs_one
+from ViewModels.game_examples import load_agents_snake_mice
 
 
 class Game():
@@ -26,30 +28,10 @@ class Game():
         self._blocks_map = None
         self._block_pos_to_redraw = None
         self._info = None
+        self._is_game_over = False
 
         self._init_world()
         self._init_screen(screen)
-
-    def notify_user_input_event(self, key_code):
-        """
-        Notify the game about a user-input event
-        """
-        if key_code in Actions.Map:
-            self._user_actions.append(Actions.Map[key_code])
-
-    def set_game_speed(self, game_speed):
-        """
-        Notifies all the agents of the change in the game's speed
-        """
-        for agent in self._agents:
-            agent.set_game_speed(game_speed)
-
-    def notify_game_resumed(self):
-        """
-        Notifies all the agents that the game is resumed
-        """
-        for agent in self._agents:
-            agent.notify_game_resumed()
 
     def _init_world(self):
         """
@@ -80,6 +62,33 @@ class Game():
             agent.draw(screen, self._BLOCK_DIM, self._LINE_THICKNESS)
             self._block_pos_to_redraw.append(agent.get_pos())
 
+    def is_game_over(self):
+        """
+        Returns a flag indicating whether the game has ended
+        """
+        return bool(self._is_game_over)
+
+    def notify_user_input_event(self, key_code):
+        """
+        Notify the game about a user-input event
+        """
+        if key_code in Actions.Map:
+            self._user_actions.append(Actions.Map[key_code])
+
+    def set_game_speed(self, game_speed):
+        """
+        Notifies all the agents of the change in the game's speed
+        """
+        for agent in self._agents:
+            agent.set_game_speed(game_speed)
+
+    def notify_game_resumed(self):
+        """
+        Notifies all the agents that the game is resumed
+        """
+        for agent in self._agents:
+            agent.notify_game_resumed()
+
     def print_log(self):
         """
         Prints the log of the agent's ai's most recent decisions
@@ -87,7 +96,31 @@ class Game():
         for agent in self._agents:
             agent.print_log()
 
-    def _check_who_died(self, kill_flag_dict):
+    def update(self, is_forced):
+        """
+        Update the game state
+        """
+        for agent in self._agents:
+            agent.set_info(self._info.localize(agent.get_pos(), self._agents_name_radii_map[agent.get_name()]))
+            # TODO: Decide how many actions to pass
+            action = self._user_actions[0] if len(self._user_actions) > 0 else None
+
+            old_pos = agent.get_pos()
+
+            if agent.update(action, is_forced) and agent.get_name() in self._agents_performance_reports_map:
+                self._agents_performance_reports_map[agent.get_name()].update(agent.get_pos(), self._check_who_died())
+
+            if self._info.is_pos_occupied(agent.get_pos()) and not agent.is_aggressive():
+                agent.set_pos(old_pos)
+
+            self._info.set_agent_pos_by_name(agent.get_name(), agent.get_pos())
+
+        self._user_actions.clear()
+
+        if self.is_game_over():
+            self._end_world()
+
+    def _check_who_died(self):
         """
         Determines which, if any, agents died during the last update cycle
         """
@@ -109,37 +142,18 @@ class Game():
                     print('{0} was destroyed'.format(friendly_agent.get_name()))
                     break
         if remaining_friendly_agents <= 0:
-            kill_flag_dict['kill_flag'] = True
+            self._is_game_over = True
         if len(destroyed_agent_pairs) > 0:
             self._info.set_agents(self._agents)
         return destroyed_agent_pairs
 
     def _end_world(self):
         """
-        Cleans up any necessary game resources and prints or logs appropriate performance reports
+        Cleans up any necessary game resources and log appropriate performance reports
         """
         for agent in self._agents:
             if agent.get_type() == Agent.Enemy:
                 self._agents_performance_reports_map[agent.get_name()].print_to_console()
-
-    def update(self, kill_flag_dict, is_forced):
-        """
-        Update the game state
-        """
-        for agent in self._agents:
-            agent.set_info(self._info.localize(agent.get_pos(), self._agents_name_radii_map[agent.get_name()]))
-            # TODO: Decide how many actions to pass
-            action = self._user_actions[0] if len(self._user_actions) > 0 else None
-
-            if agent.update(action, is_forced) and agent.get_name() in self._agents_performance_reports_map:
-                self._agents_performance_reports_map[agent.get_name()].update(agent.get_pos(), self._check_who_died(kill_flag_dict))
-
-            self._info.set_agent_pos_by_name(agent.get_name(), agent.get_pos())
-
-        self._user_actions.clear()
-
-        if kill_flag_dict['kill_flag']:
-            self._end_world()
 
     def draw(self, screen):
         """
